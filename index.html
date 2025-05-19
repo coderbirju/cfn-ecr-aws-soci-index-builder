@@ -3110,37 +3110,31 @@
       <h2 id="_predeployment_steps">Predeployment steps</h2>
       <div class="sectionbody">
         <div class="olist arabic">
-          <li>
-            <p>We will use <a href="https://aws-ia.github.io/taskcat/" target="_blank" rel="noopener">taskcat</a> tool
-              to package and upload the code artifacts.
-              There is a .taskcat/yaml file which has some bootstrap config to create regional S3 buckets and upload
-              the resources, including the cloudformation template and lambda code packages.</p>
-          </li>
-          <li>
-            <p>Taskcat installation:</p>
-            <div class="ulist">
-              <ul>
-                <li>
-                  <p>Ensure you have pip and Docker installed on your system.</p>
-                </li>
-                <li>
-                  <p>Install taskcat using pip: <code>pip install taskcat</code></p>
-                </li>
-                <li>
-                  <p>For detailed installation instructions, visit: <a
-                      href="https://aws-ia.github.io/taskcat/docs/INSTALLATION/" target="_blank" rel="noopener">taskcat
-                      installation</a></p>
-                </li>
-              </ul>
-            </div>
-          </li>
-          <li>
-            <p>The repository includes a <code>.taskcat.yml</code> configuration file that defines how taskcat should
-              package and upload the resources.
-          </li>
-          <li>
-            <p>Once taskcat is installed, run <code>taskcat upload</code> from the git repository. This command will:
-            </p>
+          <div> We will use <a href="https://aws-ia.github.io/taskcat/" target="_blank" rel="noopener">taskcat</a> tool
+            to package and upload the code artifacts.
+            <br>
+          </div>
+          <br>
+          <b>Taskcat installation:</b>
+          <div class="ulist">
+            <ul>
+              <li>
+                <p>Ensure you have <a href="https://pip.pypa.io/en/stable/installation/">pip</a>  and <a href="https://docs.docker.com/get-started/get-docker/">Docker</a> installed on your system.</p>
+              </li>
+              <li>
+                <p>Install taskcat using pip: <code>pip install taskcat</code></p>
+              </li>
+              <li>
+                <p>For detailed installation instructions, visit: <a
+                    href="https://aws-ia.github.io/taskcat/docs/INSTALLATION/" target="_blank" rel="noopener">taskcat
+                    installation</a></p>
+              </li>
+              <li>
+                The repository includes a <code>.taskcat.yml</code> configuration file that defines how taskcat should package and upload the resources.
+              </li>
+            </ul>
+          </div>
+          <b>Once taskcat is installed, run <code>taskcat upload</code> from the git repository. This command will:</b>
             <div class="ulist">
               <ul>
                 <li>
@@ -3166,8 +3160,6 @@
                 </li>
               </ul>
             </div>
-          </li>
-          <li>
             <p>Sign in to the AWS CloudFormation console or call the CloudFormation <code>CreateStack</code> API using
               IAM credentials that have permissions to create, update, rollback, and delete a stack. Minimally, the
               IAM role must have permissions to create, modify, and delete stack resources. For more information,
@@ -3405,8 +3397,7 @@
         <div class="paragraph">
           <p>To submit feature ideas and report bugs, use the <strong>Issues</strong> section of the <a
               href="https://github.com/aws-ia/cfn-ecr-aws-soci-index-builder" target="_blank" rel="noopener">GitHub
-              repository</a> for this Partner Solution. To submit code, refer to the <a href="https://fwd.aws/NwqYA?"
-              target="_blank" rel="noopener">Partner Solution Contributor&#8217;s Guide</a>. To submit feedback on
+              repository</a> for this Partner Solution. To submit feedback on
             this
             deployment guide, use the following GitHub links:</p>
         </div>
@@ -3469,7 +3460,7 @@
       <!-- We can use document attributes: -->
       <!-- Generated with Asciidoctor v2.0.17. -->
       <a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> |
-      &copy; 2023, Amazon Web Services, Inc. or its affiliates and Amazon. All rights reserved.
+      &copy; 2025, Amazon Web Services, Inc. or its affiliates and Amazon. All rights reserved.
     </p>
   </footer>
 </body>
