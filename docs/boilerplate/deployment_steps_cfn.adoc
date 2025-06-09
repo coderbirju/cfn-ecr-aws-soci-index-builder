@@ -1,12 +1,44 @@
-. Sign in to your AWS account, and launch this Partner Solution, as described under link:#_deployment_options[Deployment options]. The AWS CloudFormation console opens with a prepopulated template.
-. Choose the correct AWS Region, and then choose *Next*.
-. On the *Create stack* page, keep the default setting for the template URL, and then choose *Next*.
-. On the *Specify stack details* page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. When you finish reviewing and customizing the parameters, choose *Next*.
+1. Sign in to your AWS account, and open AWS Cloudformation console.
+
+2. Choose the AWS Region you want to deploy and choose *Create stack* option, select *With new resources(standard)*
+* Paste the S3 Url from the predeployment step
 +
-NOTE: Unless you're customizing the Partner Solution templates or are instructed otherwise in this guide's *Predeployment* section, don't change the default settings for the following parameters: `QSS3BucketName`, `QSS3BucketRegion`, and `QSS3KeyPrefix`. Changing the values of these parameters will modify code references that point to the Amazon Simple Storage Service (Amazon S3) bucket name and key prefix. For more information, refer to the https://fwd.aws/NwqYA?[AWS Partner Solutions Contributor's Guide^].
+[IMPORTANT]
+====
+Ensure that you select the same region that was specified in your taskcat.yml file.
+====
 +
-. On the *Configure stack options* page, you can https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html[specify tags^] (key-value pairs) for resources in your stack and https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html[set advanced options^]. When you finish, choose *Next*.
-. On the *Review* page, review and confirm the template settings. Under *Capabilities*, select all of the check boxes to acknowledge that the template creates AWS Identity and Access Management (IAM)  resources that might require the ability to automatically expand macros.
-. Choose *Create stack*. The stack takes about {deployment_time} to deploy.
-. Monitor the stack's status, and when the status is *CREATE_COMPLETE*, the {partner-product-name} deployment is ready.
-. To view the created resources, choose the *Outputs* tab.
+image::../docs/deployment_guide/images/create_stack.png[Create stack example]
+
+3. On the *Specify stack details* page, provide a stack name.
+ Review the parameters for the template. Provide values for the parameters that require input, particularly the S3 bucket name (starting with `tcat-`) created during the taskcat upload step. 
+* *SociIndexVersion*: Determines the type of indices generated when a new image is pushed to the ECR repository.
+** V2 (Recommended) - Latest version with enhanced security features
+** V1 - Legacy version for backward compatibility
++
+image::../docs/deployment_guide/images/stack_details.png[Stack details example]
+
+The CloudFormation template includes the following parameters:
+
+* *SociRepositoryImageTagFilters:* Comma-separated list of SOCI repository image tag filters. Each filter is a repository name followed by a colon, ":" and followed by a tag. Both repository names and tags may contain wildcards denoted by an asterisk, "\*". 
+For example, `prod/*:latest` matches all images tagged with "latest" that are pushed to any repositories that start with "prod", while `"dev:*"` matches all images pushed to the "dev" repository. Use `"\*:*"` to match all images pushed to all repositories in your private registry.
+
+* *QSS3BucketName*: Name of the S3 bucket for your copy of the deployment assets. Keep the default name unless you are customizing the template.
+
+* *QSS3KeyPrefix*: S3 key prefix that is used to simulate a folder for your copy of the deployment assets. Keep the default prefix unless you are customizing the template.
+
+* *IamPermissionsBoundaryArn*: IAM Roles might require an IAM Permissions boundary in order to be created and perform subsequent API calls to services. This parameter expects the ARN of an IAM policy, or to be set to none. When you finish reviewing and customizing the parameters, choose Next.
+
++
+NOTE: Unless you're customizing the CFN template or are instructed otherwise in this guide's *Predeployment* section, don't change the default settings for the following parameters: `QSS3BucketName`, `QSS3BucketRegion`, and `QSS3KeyPrefix`. Changing the values of these parameters will modify code references that point to the Amazon Simple Storage Service (Amazon S3) bucket name and key prefix.
++
+
+* On the *Configure stack options* page, you can https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-resource-tags.html[specify tags] (key-value pairs) for resources in your stack and https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html#configure-stack-options[set advanced options]. When you finish, choose *Next*.
+
+* On the *Review* page, review and confirm the template settings. Under *Capabilities*, select all of the check boxes to acknowledge that the template creates AWS Identity and Access Management (IAM) resources that might require the ability to automatically expand macros.
+
+* Choose *Create stack*. The stack takes about 5 minutes to deploy.
+
+* Monitor the stack's status, and when the status is *CREATE_COMPLETE*, the CFN AWS SOCI Index Builder deployment is ready.
+
+* To view the created resources, choose the *Outputs* tab.
