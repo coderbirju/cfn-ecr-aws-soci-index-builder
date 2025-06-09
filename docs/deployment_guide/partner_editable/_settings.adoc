@@ -1,13 +1,12 @@
 :partner-solution-project-name: cfn-ecr-aws-soci-index-builder
-:partner-solution-github-org: aws-ia
+:partner-solution-github-org: awslabs
 :partner-product-name: CFN AWS SOCI Index Builder
 :partner-product-short-name: SOCI Index Builder
-:partner-company-name: Amazon
-:doc-month: March
-:doc-year: 2023
-:partner-contributors: Amazon Elastic Container Registry team
-:aws-ia-contributors: Dylan Owen and Tony Bulding, AWS Integration & Automation team
+:partner-company-name: 
+:doc-month: June
+:doc-year: 2025
+:partner-contributors: AWS Nucleo
+:aws-ia-contributors: Container Runtime
 :deployment_time: 5 minutes
 :default_deployment_region: us-east-1
 // :private_repo:
-
