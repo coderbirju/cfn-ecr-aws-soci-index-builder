@@ -1,7 +1,15 @@
 // Edit this placeholder text as necessary to describe the deployment options.
 
-This solution provides the following deployment options:
+This template deploys the template to the regions specified in the `taskcat.yml` file.
 
-* https://fwd.aws/wNB78?[Deploy {partner-product-short-name}^]. This builds a new workflow consisting of an Amazon EventBridge rule, filtering Lambda function, SOCI index generator Lambda function, and IAM resources.
-** https://console.amazonaws-us-gov.com/cloudformation/home?region=us-gov-west-1#/stacks/create?stackName=cfn-ecr-aws-soci-index-builder&templateURL=https://aws-quickstart-us-gov-west-1.s3.us-gov-west-1.amazonaws.com/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml[Deploy {partner-product-short-name} to GovCloud (US)^]
-** https://console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create?stackName=cfn-ecr-aws-soci-index-builder&templateURL=https://aws-quickstart-cn-north-1.s3.cn-north-1.amazonaws.com.cn/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml[Deploy {partner-product-short-name} to China (Beijing)^]
+To deploy this template in AWS GovCloud or China regions, you need to update the `taskcat.yml` file in your https://github.com/awslabs/cfn-ecr-aws-soci-index-builder.git[cfn-ecr-aws-soci-index-builder] repository with the appropriate region codes:
+
+* AWS GovCloud Regions
+    ** us-gov-west-1
+    ** us-gov-east-1
+
+* China Regions
+    ** cn-north-1
+    ** cn-northwest-1
+
+TIP: NOTE: Ensure that you have the necessary permissions and account access to deploy in these regions.
