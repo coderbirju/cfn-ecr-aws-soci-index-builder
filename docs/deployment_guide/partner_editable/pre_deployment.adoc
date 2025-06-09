@@ -1,116 +1,173 @@
-//Include any predeployment steps here, such as signing up for a Marketplace AMI or making any changes to a partner account. If there are no predeployment steps, leave this file empty.
-
 == Predeployment steps
 
-1. Create an Amazon ECR repository to store container images and generated SOCI artifacts.
-2. Sign in to the AWS CloudFormation console or call the CloudFormation `CreateStack` API using IAM credentials that have permissions to create, update, rollback, and delete a stack. Minimally, the IAM role must have permissions to create, modify, and delete stack resources. For more information, refer to https://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/using-iam-template.html[Controlling access with Amazon Identity and Access Management^].
+*Prerequisites*
 
-** Amazon EventBridge permissions
-+
-[source, json]
-----
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "events:DescribeRule",
-                "events:PutRule",
-                "events:PutTargets",
-                "events:DeleteRule",
-                "events:RemoveTargets"
-            ],
-            "Resource": "arn:aws:events:<Region>:<AccountId>:rule/ECRImageActionEventBridgeRule"
-        }
-    ]
-}
-----
-+
+Ensure you have the following tools installed:
 
-** Amazon S3 permissions (to fetch Lambda code)
-+
-[source, json]
-----
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::aws-quickstart-<Region>/*soci_index_generator_lambda.zip",
-                "arn:aws:s3:::aws-quickstart-<Region>/*ecr-image-action-event-filtering/lambda.zip"
-            ]
-        }
-    ]
-}
-----
-+
+* https://git-scm.com/book/en/v2/Getting-Started-Installing-Git[Git] - To clone the repository
+* http://pip.pypa.io/en/stable/installation/[Python/pip] - Required for taskcat installation
+* https://docs.docker.com/get-started/get-docker/[Docker] - For packaging Lambda functions
+* https://aws-ia.github.io/taskcat/docs/INSTALLATION/[taskcat] - Install using: `pip install taskcat`
 
-** Lambda permissions
-+
-[source, json]
+[source,bash]
 ----
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "lambda:GetFunction",
-                "lambda:CreateFunction",
-                "lambda:UpdateFunctionConfiguration",
-                "lambda:AddPermission",
-                "lambda:DeleteFunction",
-                "lambda:RemovePermission",
-                "lambda:InvokeFunction"
-            ],
-            "Resource": [
-                "arn:aws:lambda:<Region>:<AccountId>:function:*-ECRImageActionEventFilteringLambda-*",
-                "arn:aws:lambda:<Region>:<AccountId>:function:*-SociIndexGeneratorLambda-*",
-                "arn:aws:lambda:<Region>:<AccountId>:function:RepositoryNameParsingLambda"
-            ]
-        }
-    ]
-}
+# Clone the repository
+git clone https://github.com/awslabs/cfn-ecr-aws-soci-index-builder.git
+cd cfn-ecr-aws-soci-index-builder
+
+# Verify Docker is running
+docker info
+----
+
+*Configuration and Upload*
+
+We will use https://aws-ia.github.io/taskcat/[taskcat] tool to package and upload the code artifacts.
+
+[TIP]
+====
+The .taskcat.yml file must be updated with the correct regions where you want to deploy your stack. This is crucial as the template will be built specifically for those regions.
+====
+
+** Example `.taskcat.yml` configuration
++
+[source, yaml]
+----
+project:
+  name: cfn-ecr-aws-soci-index-builder
+  owner: quickstart@amazon.com
+  s3_regional_buckets: true
+  lambda_source_path: functions/source
+  lambda_zip_path: functions/packages
+  parameters:
+    QSS3BucketName: $[taskcat_autobucket]
+    QSS3KeyPrefix: "cfn-ecr-aws-soci-index-builder/"
+tests:
+  can-deploy:
+    parameters:
+      SociRepositoryImageTagFilters: "*:*"
+    regions:
+      - us-east-1      # US East (N. Virginia)
+      - eu-west-1      # Europe (Ireland)
+      - us-west-1      # US West (N. California)
+      # Add or remove regions as needed
+    template: templates/SociIndexBuilder.yml
 ----
 +
 
-** IAM permissions
+** For AWS GovCloud deployment, update the regions section:
 +
-[source, json]
+[source, yaml]
 ----
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:GetRole",
-                "iam:GetRolePolicy",
-                "iam:CreateRole",
-                "iam:PutRolePolicy",
-                "iam:PassRole",
-                "iam:DeleteRole",
-                "iam:DeleteRolePolicy"
-            ],
-            "Resource": [
-                "arn:aws:iam::<AccountId>:role/*-ECRImageActionEventFilteringLambdaRole-*",
-                "arn:aws:iam::<AccountId>:role/*-SociIndexGeneratorLambdaRole-*",
-                "arn:aws:iam::<AccountId>:role/*-RepositoryNameParsingLambdaRole-*"
-            ]
-        }
-    ]
-}
+    regions:
+      - us-gov-west-1  # AWS GovCloud (US-West)
+      - us-gov-east-1  # AWS GovCloud (US-East)
+----
++
+.
+
+
+** For China Region deployment, update the regions section:
++
+[source,yaml]
+----
+    regions:
+      - cn-north-1     # China (Beijing)
+      - cn-northwest-1 # China (Ningxia)
 ----
 
-Notes:
+[TIP]
+====
+Before proceeding with the actual deployment, you can run `taskcat upload --dry-run` to safely preview the resources that will be provisioned. This command simulates the upload process without making any actual changes, helping you verify your configuration.
 
-* Replace `<AccountId>` with the AWS account ID from the account you deploy to, and replace `<Region>` with the Region you deploy to (for example, `us-east-1`).
-* The Lambda function name `_ECRImageActionEventFilteringLambda_`, specified in the **Resources** section, is truncated if your stack name exceeds 15 characters.
-* The role name `_ECRImageActionEventFilteringLambdaRole_`, specified in the **Resources** section, is truncated if your stack name exceeds 11 characters.
-* The role name `_SociIndexGeneratorLambdaRole_`, specified in the **Resources** section, is truncated if your stack name exceeds 21 characters.
-* The role name `_RepositoryNameParsingLambdaRole_`, specified in the **Resources** section, is truncated if your stack name exceeds 18 characters.
+image::../docs/deployment_guide/images/taskcat_dry_run.png[Taskcat dry-run example]
+====
+
+After configuring the taskcat.yml file, run `taskcat upload` from the root directory of the repository.
+
+The upload command will:
+
+* Read the configuration from `.taskcat.yml` file
+* Package the lambda functions using the provided Dockerfile (this is why Docker is required)
+* Create S3 buckets in all specified regions with the naming pattern `tcat-<hash>-<region>`
+* Upload the CloudFormation template and Lambda packages to these buckets with the prefix `cfn-ecr-aws-soci-index-builder/`
+* Make the CloudFormation template available at the URL pattern `https://<bucket-name>.s3.<region>.amazonaws.com/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml`
+
+[NOTE]
+====
+In the above example you're deploying to the us-east-2 region, the S3 bucket name created is:
+`tcat-318317e4bf395d3fa89e1d675d64f43e-us-east-2`
+====
+
+After the upload completes:
+
+1. Verify your deployment - Find your S3 bucket (starts with `tcat-`) in the AWS Console
++
+image::../docs/deployment_guide/images/verify_S3.png[Verify S3 bucket contents]
+
+2. Locate the template at `cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml`
+
+3. Copy the Object URL:
++
+image::../docs/deployment_guide/images/object_url.png[Object URL location]
+
+[TIP]
+====
+You can also construct the template URL using this pattern:
+`https://<bucket-name>.s3.<region>.amazonaws.com/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml`
+
+Replace `<bucket-name>` with your S3 bucket name (starting with `tcat-`) and `<region>` with your deployment region.
+====
+
+=== Alternative Deployment Method
+
+You can also automatically deploy the stack directly from the CLI using taskcat. This method requires updating the `.taskcat.yml` file with your specific requirements, particularly the `SociIndexVersion` parameter:
+
+.Example .taskcat.yml configuration for direct deployment
+[source,yaml]
+----
+project:
+  name: cfn-ecr-aws-soci-index-builder
+  owner: quickstart@amazon.com
+  s3_regional_buckets: true
+  lambda_source_path: functions/source
+  lambda_zip_path: functions/packages
+  parameters:
+    QSS3BucketName: $[taskcat_autobucket]
+    QSS3KeyPrefix: "cfn-ecr-aws-soci-index-builder/"
+tests:
+  can-deploy:
+    stack_name: "Soci-index-builder"
+    # stack_name_prefix: "PrefixStackname"
+    # stack_name_suffix: "SufficStackName"
+    parameters:
+      SociRepositoryImageTagFilters: "*:*"
+      SociIndexVersion: "V1"
+    regions:
+      - us-east-1
+    template: templates/SociIndexBuilder.yml
+----
+
+To deploy the stack, run:
+[source,bash]
+----
+taskcat test run -n
+----
+
+The `-n` flag prevents the stack from being deleted after deployment, which is the default behavior of `test run`.
+
+[TIP]
+====
+You can customize the stack name using one of these options:
+
+* `stack_name`: Set a specific name
+* `stack_name_prefix`: Add a prefix to the name
+* `stack_name_suffix`: Add a suffix to the name
+====
+
+[IMPORTANT]
+====
+While this method provides a convenient one-command deployment, it has some limitations:
+
+* The `SociIndexVersion` is set at deployment time and cannot be changed without redeploying the stack
+* While the direct deployment method sets a fixed SociIndexVersion in the taskcat configuration, using the upload command and console deployment approach allows you to specify different SociIndexVersion values each time you create a new stack from the pre-uploaded template
+====

@@ -1,7 +1,7 @@
 // Add any unique troubleshooting steps here.
 For troubleshooting common issues, refer to https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html[Troubleshooting CloudFormation] and the https://fwd.aws/rA69w?[AWS Quick Start General Information Guide].
 
-Lambda logs for generating SOCI index artifacts can be found in the CloudWatch log group `/aws/lambda/<StackName>-SociIndexGeneratorLambda`. Lambda logs for repository image tag filtering and matches can be found in the CloudWatch log group `/aws/lambda/<StackName>-ECRImageActionEventFilteringLambda`, where `<StackName>` is the name of the stack that you entered in the *Deployment steps* section.
+Lambda logs for generating SOCI index artifacts can be found in the CloudWatch log group `/aws/lambda/<StackName>-SociIndexGeneratorLambda-<hash>`. Lambda logs for repository image tag filtering and matches can be found in the CloudWatch log group `/aws/lambda/<StackName>-ECRImageActionEventFilteringLambda-<hash>`, where `<StackName>` is the name of the stack that you entered in the *Deployment steps* section.
 
 If Lambda logs for generating SOCI index artifacts show that the Lambda function is timing out (that is, **Task timed out** is in the log), this is likely caused by the image size. {partner-product-short-name} supports a maximum compressed image size of 6 GB because larger sizes may force the SOCI index generator Lambda to time out after 15 minutes.
 
