@@ -43,7 +43,7 @@ endif::custom_title[]
 
 // HTML metadata for search-engine optimization must remain at the end of the file.
 :description: {partner-product-name} Deployment Guide on AWS
-:keywords: Partner Solution, AWS, {partner-product-name}
+:keywords: SOCI, Partner Solution, AWS, {partner-product-name}
 
 // The path to the layout file for the specific deployment guide type.
 // This comes from the generated file 'include::../docs/DEPLOYMENT_GUIDE.adoc[]'.
