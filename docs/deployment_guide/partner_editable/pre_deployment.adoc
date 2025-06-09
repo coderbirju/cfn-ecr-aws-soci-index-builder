@@ -1,116 +1,20 @@
-//Include any predeployment steps here, such as signing up for a Marketplace AMI or making any changes to a partner account. If there are no predeployment steps, leave this file empty.
+*Prerequisites*
 
-== Predeployment steps
+Ensure you have the following tools installed:
 
-1. Create an Amazon ECR repository to store container images and generated SOCI artifacts.
-2. Sign in to the AWS CloudFormation console or call the CloudFormation `CreateStack` API using IAM credentials that have permissions to create, update, rollback, and delete a stack. Minimally, the IAM role must have permissions to create, modify, and delete stack resources. For more information, refer to https://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/using-iam-template.html[Controlling access with Amazon Identity and Access Management^].
+* https://git-scm.com/book/en/v2/Getting-Started-Installing-Git[Git] - To clone the repository
+* http://pip.pypa.io/en/stable/installation/[Python/pip] - Required for taskcat installation
+* https://docs.docker.com/get-started/get-docker/[Docker] - For packaging Lambda functions
+* https://aws-ia.github.io/taskcat/docs/INSTALLATION/[taskcat] - Install using: `pip install taskcat`
 
-** Amazon EventBridge permissions
-+
-[source, json]
+[source,bash]
 ----
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "events:DescribeRule",
-                "events:PutRule",
-                "events:PutTargets",
-                "events:DeleteRule",
-                "events:RemoveTargets"
-            ],
-            "Resource": "arn:aws:events:<Region>:<AccountId>:rule/ECRImageActionEventBridgeRule"
-        }
-    ]
-}
-----
-+
+# Clone the repository
+git clone https://github.com/awslabs/cfn-ecr-aws-soci-index-builder.git
+cd cfn-ecr-aws-soci-index-builder
 
-** Amazon S3 permissions (to fetch Lambda code)
-+
-[source, json]
-----
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::aws-quickstart-<Region>/*soci_index_generator_lambda.zip",
-                "arn:aws:s3:::aws-quickstart-<Region>/*ecr-image-action-event-filtering/lambda.zip"
-            ]
-        }
-    ]
-}
-----
-+
-
-** Lambda permissions
-+
-[source, json]
-----
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "lambda:GetFunction",
-                "lambda:CreateFunction",
-                "lambda:UpdateFunctionConfiguration",
-                "lambda:AddPermission",
-                "lambda:DeleteFunction",
-                "lambda:RemovePermission",
-                "lambda:InvokeFunction"
-            ],
-            "Resource": [
-                "arn:aws:lambda:<Region>:<AccountId>:function:*-ECRImageActionEventFilteringLambda-*",
-                "arn:aws:lambda:<Region>:<AccountId>:function:*-SociIndexGeneratorLambda-*",
-                "arn:aws:lambda:<Region>:<AccountId>:function:RepositoryNameParsingLambda"
-            ]
-        }
-    ]
-}
-----
-+
-
-** IAM permissions
-+
-[source, json]
-----
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:GetRole",
-                "iam:GetRolePolicy",
-                "iam:CreateRole",
-                "iam:PutRolePolicy",
-                "iam:PassRole",
-                "iam:DeleteRole",
-                "iam:DeleteRolePolicy"
-            ],
-            "Resource": [
-                "arn:aws:iam::<AccountId>:role/*-ECRImageActionEventFilteringLambdaRole-*",
-                "arn:aws:iam::<AccountId>:role/*-SociIndexGeneratorLambdaRole-*",
-                "arn:aws:iam::<AccountId>:role/*-RepositoryNameParsingLambdaRole-*"
-            ]
-        }
-    ]
-}
+# Verify Docker is running
+docker info
 ----
 
-Notes:
 
-* Replace `<AccountId>` with the AWS account ID from the account you deploy to, and replace `<Region>` with the Region you deploy to (for example, `us-east-1`).
-* The Lambda function name `_ECRImageActionEventFilteringLambda_`, specified in the **Resources** section, is truncated if your stack name exceeds 15 characters.
-* The role name `_ECRImageActionEventFilteringLambdaRole_`, specified in the **Resources** section, is truncated if your stack name exceeds 11 characters.
-* The role name `_SociIndexGeneratorLambdaRole_`, specified in the **Resources** section, is truncated if your stack name exceeds 21 characters.
-* The role name `_RepositoryNameParsingLambdaRole_`, specified in the **Resources** section, is truncated if your stack name exceeds 18 characters.

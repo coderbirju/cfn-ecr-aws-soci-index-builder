@@ -1,0 +1,63 @@
+// Edit this placeholder text as necessary to describe the deployment options.
+
+We will use https://aws-ia.github.io/taskcat/[taskcat] tool to package and upload the code artifacts. Taskcat is a tool that will build and bundle the CFN template into an S3 Bucket which users can then use to spin up their cloudformation stack.
+
+The configuration for the taskcat tool is present in the `.taskcat.yml` in the root of the project directory. 
+
+** Example `.taskcat.yml` configuration
++
+[source, yaml]
+----
+project:
+  name: cfn-ecr-aws-soci-index-builder
+  owner: quickstart@amazon.com
+  s3_regional_buckets: true
+  lambda_source_path: functions/source
+  lambda_zip_path: functions/packages
+  parameters:
+    QSS3BucketName: $[taskcat_autobucket]
+    QSS3KeyPrefix: "cfn-ecr-aws-soci-index-builder/"
+tests:
+  can-deploy:
+    parameters:
+      SociRepositoryImageTagFilters: "*:*"
+    regions:
+      - us-east-1      # US East (N. Virginia)
+      - eu-west-1      # Europe (Ireland)
+      - us-west-1      # US West (N. California)
+      # Add or remove regions as needed
+    template: templates/SociIndexBuilder.yml
+----
++
+
+[TIP]
+====
+The .taskcat.yml file must be updated with the correct regions where you want to deploy your stack. This is crucial as the template will be built specifically for those regions.
+====
+
+** For AWS GovCloud deployment, update the regions section:
++
+[source, yaml]
+----
+    regions:
+      - us-gov-west-1  # AWS GovCloud (US-West)
+      - us-gov-east-1  # AWS GovCloud (US-East)
+----
++
+
+** For China Region deployment, update the regions section:
++
+[source,yaml]
+----
+    regions:
+      - cn-north-1     # China (Beijing)
+      - cn-northwest-1 # China (Ningxia)
+----
+
+
+[TIP]
+====
+Before proceeding with the actual deployment, you can run `taskcat upload --dry-run` to safely preview the resources that will be provisioned. This command simulates the upload process without making any actual changes, helping you verify your configuration.
+
+image::../docs/deployment_guide/images/taskcat_dry_run.png[Taskcat dry-run example]
+====
