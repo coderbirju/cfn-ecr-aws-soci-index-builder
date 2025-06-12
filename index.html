@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
 <meta name="description" content="CFN AWS SOCI Index Builder Deployment Guide on AWS">
-<meta name="keywords" content="Partner Solution, AWS, CFN AWS SOCI Index Builder">
+<meta name="keywords" content="SOCI, Partner Solution, AWS, CFN AWS SOCI Index Builder">
 <title>CFN AWS SOCI Index Builder on AWS</title>
 <style>
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -902,9 +901,14 @@ p.footer-text a{color:#d7d8d8}
 <li><a href="#_overview">Overview</a></li>
 <li><a href="#_costs_and_licenses">Costs and licenses</a></li>
 <li><a href="#_architecture">Architecture</a></li>
-<li><a href="#_deployment_options">Deployment options</a></li>
-<li><a href="#_predeployment_steps">Predeployment steps</a></li>
-<li><a href="#_deployment_steps">Deployment steps</a></li>
+<li><a href="#_predeployment_steps">Predeployment Steps</a></li>
+<li><a href="#_taskcat_configuration">Taskcat Configuration</a></li>
+<li><a href="#_deployment_steps">Deployment steps</a>
+<ul class="sectlevel2">
+<li><a href="#_1_automatic_deployment">1. Automatic Deployment</a></li>
+<li><a href="#_2_manual_deployment">2. Manual Deployment</a></li>
+</ul>
+</li>
 <li><a href="#_cleanup">Cleanup</a></li>
 <li><a href="#_troubleshooting">Troubleshooting</a></li>
 <li><a href="#_resources">Resources</a></li>
@@ -918,16 +922,16 @@ p.footer-text a{color:#d7d8d8}
 <div id="preamble">
 <div class="sectionbody">
 <h2 id="_cfn_aws_soci_index_builder_on_aws" class="discrete text-center">CFN AWS SOCI Index Builder on AWS</h2>
-<h2 id="_partner_solution_deployment_guide" class="discrete text-left text-center">Partner Solution Deployment Guide</h2>
+<h2 id="_deployment_guide" class="discrete text-left text-center">Deployment Guide</h2>
 <div class="imageblock text-center">
 <div class="content">
 <img src="https://aws-quickstart.s3.amazonaws.com/docs/deployment-guide/aws-quickstart-deployment-graphic.png" alt="QS" width="80" height="80">
 </div>
 </div>
 <div class="paragraph text-center">
-<p><strong>March 2023</strong><br>
-<em>Amazon Elastic Container Registry team</em><br>
-<em>Dylan Owen and Tony Bulding, AWS Integration &amp; Automation team</em><br></p>
+<p><strong>June 2025</strong><br>
+<em>AWS Nucleo</em><br>
+<em>Container Runtime</em><br></p>
 </div>
 <div class="imageblock text-left image-container">
 <div class="content">
@@ -941,13 +945,14 @@ p.footer-text a{color:#d7d8d8}
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Refer to the <a href="https://github.com/aws-ia/cfn-ecr-aws-soci-index-builder" target="_blank" rel="noopener">GitHub repository</a> to view source files, report bugs, submit feature ideas, and post feedback about this Partner Solution. To comment on the documentation, refer to <a href="#_feedback">Feedback</a>.
+Refer to the <a href="https://github.com/awslabs/cfn-ecr-aws-soci-index-builder" target="_blank" rel="noopener">GitHub repository</a> to view source files, report bugs, submit feature ideas, and post feedback about this Solution. To comment on the documentation, refer to <a href="#_feedback">Feedback</a>.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph text-left">
-<p>This Partner Solution was created by Amazon in collaboration with Amazon Web Services (AWS). <a href="https://aws.amazon.com/solutions/partners/" target="_blank" rel="noopener">Partner Solutions</a> are automated reference deployments that help people deploy popular technologies on AWS according to AWS best practices. If you&#8217;re unfamiliar with AWS Partner Solutions, refer to the <a href="https://fwd.aws/rA69w?" target="_blank" rel="noopener">AWS Partner Solution General Information Guide</a>.</p>
+<p>This Cloud Formation Template was created by Amazon Web Services (AWS).
+This template helps customers deploy SOCI Index builder stack on AWS according to AWS best practices.</p>
 </div>
 </div>
 </div>
@@ -963,7 +968,7 @@ Refer to the <a href="https://github.com/aws-ia/cfn-ecr-aws-soci-index-builder" 
 <h2 id="_costs_and_licenses">Costs and licenses</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>There is no cost to use this solution, but you will be billed for any AWS services or resources that this solution deploys. For more information, refer to the <a href="https://fwd.aws/rA69w?" target="_blank" rel="noopener">AWS Quick Starts General Information Guide</a>.</p>
+<p>There is no cost to use this template, but you will be billed for any AWS services or resources that this template deploys. For more information, refer to the <a href="https://fwd.aws/rA69w?" target="_blank" rel="noopener">AWS Quick Starts General Information Guide</a>.</p>
 </div>
 </div>
 </div>
@@ -971,7 +976,7 @@ Refer to the <a href="https://github.com/aws-ia/cfn-ecr-aws-soci-index-builder" 
 <h2 id="_architecture">Architecture</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Deploying this solution with default parameters builds the following SOCI Index Builder environment in the
+<p>Deploying this template with default parameters builds the following SOCI Index Builder environment in the
 AWS Cloud.</p>
 </div>
 <div id="architecture1" class="imageblock">
@@ -1035,169 +1040,112 @@ AWS Cloud.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_deployment_options">Deployment options</h2>
+<h2 id="_predeployment_steps">Predeployment Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This solution provides the following deployment options:</p>
+<p><strong>Prerequisites</strong></p>
+</div>
+<div class="paragraph">
+<p>Ensure you have the following tools installed:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://fwd.aws/wNB78?" target="_blank" rel="noopener">Deploy SOCI Index Builder</a>. This builds a new workflow consisting of an Amazon EventBridge rule, filtering Lambda function, SOCI index generator Lambda function, and IAM resources.</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://console.amazonaws-us-gov.com/cloudformation/home?region=us-gov-west-1#/stacks/create?stackName=cfn-ecr-aws-soci-index-builder&amp;templateURL=https://aws-quickstart-us-gov-west-1.s3.us-gov-west-1.amazonaws.com/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml" target="_blank" rel="noopener">Deploy SOCI Index Builder to GovCloud (US)</a></p>
+<p><a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">Git</a> - To clone the repository</p>
 </li>
 <li>
-<p><a href="https://console.amazonaws.cn/cloudformation/home?region=cn-north-1#/stacks/create?stackName=cfn-ecr-aws-soci-index-builder&amp;templateURL=https://aws-quickstart-cn-north-1.s3.cn-north-1.amazonaws.com.cn/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml" target="_blank" rel="noopener">Deploy SOCI Index Builder to China (Beijing)</a></p>
+<p><a href="http://pip.pypa.io/en/stable/installation/">Python/pip</a> - Required for taskcat installation</p>
+</li>
+<li>
+<p><a href="https://docs.docker.com/get-started/get-docker/">Docker</a> - For packaging Lambda functions</p>
+</li>
+<li>
+<p><a href="https://aws-ia.github.io/taskcat/docs/INSTALLATION/">taskcat</a> - Install using: <code>pip install taskcat</code></p>
 </li>
 </ul>
 </div>
-</li>
-</ul>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash"># Clone the repository
+git clone https://github.com/awslabs/cfn-ecr-aws-soci-index-builder.git
+cd cfn-ecr-aws-soci-index-builder
+
+# Verify Docker is running
+docker info</code></pre>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_predeployment_steps">Predeployment steps</h2>
+<h2 id="_taskcat_configuration">Taskcat Configuration</h2>
 <div class="sectionbody">
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Create an Amazon ECR repository to store container images and generated SOCI artifacts.</p>
-</li>
-<li>
-<p>Sign in to the AWS CloudFormation console or call the CloudFormation <code>CreateStack</code> API using IAM credentials that have permissions to create, update, rollback, and delete a stack. Minimally, the IAM role must have permissions to create, modify, and delete stack resources. For more information, refer to <a href="https://docs.amazonaws.cn/en_us/AWSCloudFormation/latest/UserGuide/using-iam-template.html" target="_blank" rel="noopener">Controlling access with Amazon Identity and Access Management</a>.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Amazon EventBridge permissions</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "events:DescribeRule",
-                "events:PutRule",
-                "events:PutTargets",
-                "events:DeleteRule",
-                "events:RemoveTargets"
-            ],
-            "Resource": "arn:aws:events:&lt;Region&gt;:&lt;AccountId&gt;:rule/ECRImageActionEventBridgeRule"
-        }
-    ]
-}</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Amazon S3 permissions (to fetch Lambda code)</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::aws-quickstart-&lt;Region&gt;/*soci_index_generator_lambda.zip",
-                "arn:aws:s3:::aws-quickstart-&lt;Region&gt;/*ecr-image-action-event-filtering/lambda.zip"
-            ]
-        }
-    ]
-}</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Lambda permissions</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "lambda:GetFunction",
-                "lambda:CreateFunction",
-                "lambda:UpdateFunctionConfiguration",
-                "lambda:AddPermission",
-                "lambda:DeleteFunction",
-                "lambda:RemovePermission",
-                "lambda:InvokeFunction"
-            ],
-            "Resource": [
-                "arn:aws:lambda:&lt;Region&gt;:&lt;AccountId&gt;:function:*-ECRImageActionEventFilteringLambda-*",
-                "arn:aws:lambda:&lt;Region&gt;:&lt;AccountId&gt;:function:*-SociIndexGeneratorLambda-*",
-                "arn:aws:lambda:&lt;Region&gt;:&lt;AccountId&gt;:function:RepositoryNameParsingLambda"
-            ]
-        }
-    ]
-}</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>IAM permissions</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:GetRole",
-                "iam:GetRolePolicy",
-                "iam:CreateRole",
-                "iam:PutRolePolicy",
-                "iam:PassRole",
-                "iam:DeleteRole",
-                "iam:DeleteRolePolicy"
-            ],
-            "Resource": [
-                "arn:aws:iam::&lt;AccountId&gt;:role/*-ECRImageActionEventFilteringLambdaRole-*",
-                "arn:aws:iam::&lt;AccountId&gt;:role/*-SociIndexGeneratorLambdaRole-*",
-                "arn:aws:iam::&lt;AccountId&gt;:role/*-RepositoryNameParsingLambdaRole-*"
-            ]
-        }
-    ]
-}</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-</li>
-</ol>
+<div class="paragraph">
+<p>We will use <a href="https://aws-ia.github.io/taskcat/">taskcat</a> tool to package and upload the code artifacts. Taskcat is a tool that will build and bundle the CFN template into an S3 Bucket which users can then use to spin up their cloudformation stack.</p>
 </div>
 <div class="paragraph">
-<p>Notes:</p>
+<p>The configuration for the taskcat tool is present in the <code>.taskcat.yml</code> in the root of the project directory.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Replace <code>&lt;AccountId&gt;</code> with the AWS account ID from the account you deploy to, and replace <code>&lt;Region&gt;</code> with the Region you deploy to (for example, <code>us-east-1</code>).</p>
+<p>Example <code>.taskcat.yml</code> configuration</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">project:
+  name: cfn-ecr-aws-soci-index-builder
+  owner: quickstart@amazon.com
+  s3_regional_buckets: true
+  lambda_source_path: functions/source
+  lambda_zip_path: functions/packages
+  parameters:
+    QSS3BucketName: $[taskcat_autobucket]
+    QSS3KeyPrefix: "cfn-ecr-aws-soci-index-builder/"
+tests:
+  can-deploy:
+    parameters:
+      SociRepositoryImageTagFilters: "*:*"
+    regions:
+      - us-east-1      # US East (N. Virginia)
+      - eu-west-1      # Europe (Ireland)
+      - us-west-1      # US West (N. California)
+      # Add or remove regions as needed
+    template: templates/SociIndexBuilder.yml</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The .taskcat.yml file must be updated with the correct regions where you want to deploy your stack. This is crucial as the template will be built specifically for those regions.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </li>
 <li>
-<p>The Lambda function name <code><em>ECRImageActionEventFilteringLambda</em></code>, specified in the <strong>Resources</strong> section, is truncated if your stack name exceeds 15 characters.</p>
+<p>For AWS GovCloud deployment, update the regions section:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">    regions:
+      - us-gov-west-1  # AWS GovCloud (US-West)
+      - us-gov-east-1  # AWS GovCloud (US-East)</code></pre>
+</div>
+</div>
 </li>
 <li>
-<p>The role name <code><em>ECRImageActionEventFilteringLambdaRole</em></code>, specified in the <strong>Resources</strong> section, is truncated if your stack name exceeds 11 characters.</p>
-</li>
-<li>
-<p>The role name <code><em>SociIndexGeneratorLambdaRole</em></code>, specified in the <strong>Resources</strong> section, is truncated if your stack name exceeds 21 characters.</p>
-</li>
-<li>
-<p>The role name <code><em>RepositoryNameParsingLambdaRole</em></code>, specified in the <strong>Resources</strong> section, is truncated if your stack name exceeds 18 characters.</p>
+<p>For China Region deployment, update the regions section:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">    regions:
+      - cn-north-1     # China (Beijing)
+      - cn-northwest-1 # China (Ningxia)</code></pre>
+</div>
+</div>
 </li>
 </ul>
 </div>
@@ -1206,19 +1154,162 @@ AWS Cloud.</p>
 <div class="sect1">
 <h2 id="_deployment_steps">Deployment steps</h2>
 <div class="sectionbody">
-<div class="olist arabic">
-<ol class="arabic">
+<div class="paragraph">
+<p>There are two ways to deploy this stack</p>
+</div>
+<div class="sect2">
+<h3 id="_1_automatic_deployment">1. Automatic Deployment</h3>
+<div class="paragraph">
+<p>You can automatically deploy the stack directly from the CLI using taskcat. This method requires updating the <code>.taskcat.yml</code> file with your specific requirements, particularly the <code>SociIndexVersion</code> parameter:</p>
+</div>
+<div class="listingblock">
+<div class="title">Example .taskcat.yml configuration for automatic deployment</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">project:
+  name: cfn-ecr-aws-soci-index-builder
+  owner: quickstart@amazon.com
+  s3_regional_buckets: true
+  lambda_source_path: functions/source
+  lambda_zip_path: functions/packages
+  parameters:
+    QSS3BucketName: $[taskcat_autobucket]
+    QSS3KeyPrefix: "cfn-ecr-aws-soci-index-builder/"
+tests:
+  can-deploy:
+    stack_name: "Soci-index-builder"
+    # stack_name_prefix: "PrefixStackname"
+    # stack_name_suffix: "SufficStackName"
+    parameters:
+      SociRepositoryImageTagFilters: "*:*"
+      SociIndexVersion: "V1"
+    regions:
+      - us-east-1
+    template: templates/SociIndexBuilder.yml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To deploy the stack, run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">taskcat test run -n</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>-n</code> flag prevents the stack from being deleted after deployment, which is the default behavior of <code>test run</code>.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can customize the stack name using one of these options:</p>
+</div>
+<div class="ulist">
+<ul>
 <li>
-<p>Sign in to your AWS account, and launch this Partner Solution, as described under <a href="#_deployment_options">Deployment options</a>. The AWS CloudFormation console opens with a prepopulated template.</p>
+<p><code>stack_name</code>: Set a specific name</p>
 </li>
 <li>
-<p>Choose the correct AWS Region, and then choose <strong>Next</strong>.</p>
+<p><code>stack_name_prefix</code>: Add a prefix to the name</p>
 </li>
 <li>
-<p>On the <strong>Create stack</strong> page, keep the default setting for the template URL, and then choose <strong>Next</strong>.</p>
+<p><code>stack_name_suffix</code>: Add a suffix to the name</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>While this automatic deployment provides a convenient one-command deployment, it has some limitations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>SociIndexVersion</code> is set at deployment time and cannot be changed without redeploying the stack</p>
 </li>
 <li>
-<p>On the <strong>Specify stack details</strong> page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. When you finish reviewing and customizing the parameters, choose <strong>Next</strong>.</p>
+<p>The automatic deployment method sets a fixed SociIndexVersion in the taskcat configuration, using the upload command and console deployment approach allows you to specify different SociIndexVersion values each time you create a new stack from the pre-uploaded template</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_2_manual_deployment">2. Manual Deployment</h3>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you used the automatic deployment then you can skip these steps and directly go check the cloudformation stack has deployed</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>After configuring the taskcat.yml file, run <code>taskcat upload</code> from the root directory of the repository.</p>
+</div>
+<div class="paragraph">
+<p>The upload command will:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Read the configuration from <code>.taskcat.yml</code> file</p>
+</li>
+<li>
+<p>Package the lambda functions using the provided Dockerfile (this is why Docker is required)</p>
+</li>
+<li>
+<p>Create S3 buckets in all specified regions with the naming pattern <code>tcat-&lt;hash&gt;-&lt;region&gt;</code></p>
+</li>
+<li>
+<p>Upload the CloudFormation template and Lambda packages to these buckets with the prefix <code>cfn-ecr-aws-soci-index-builder/</code></p>
+</li>
+<li>
+<p>Make the CloudFormation template available at the URL pattern <code><a href="https://&lt;bucket-name&gt;.s3.&lt;region&gt;.amazonaws.com/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml" class="bare">https://&lt;bucket-name&gt;.s3.&lt;region&gt;.amazonaws.com/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml</a></code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Before proceeding with the actual deployment, you can run <code>taskcat upload --dry-run</code> to safely preview the resources that will be provisioned. This command simulates the upload process without making any actual changes, helping you verify your configuration.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="docs/deployment_guide/images/taskcat_dry_run.png" alt="Taskcat dry-run example">
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1226,17 +1317,155 @@ AWS Cloud.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Unless you&#8217;re customizing the Partner Solution templates or are instructed otherwise in this guide&#8217;s <strong>Predeployment</strong> section, don&#8217;t change the default settings for the following parameters: <code>QSS3BucketName</code>, <code>QSS3BucketRegion</code>, and <code>QSS3KeyPrefix</code>. Changing the values of these parameters will modify code references that point to the Amazon Simple Storage Service (Amazon S3) bucket name and key prefix. For more information, refer to the <a href="https://fwd.aws/NwqYA?" target="_blank" rel="noopener">AWS Partner Solutions Contributor&#8217;s Guide</a>.
+<div class="paragraph">
+<p>In the above example you&#8217;re deploying to the us-east-2 region, the S3 bucket name created is:
+<code>tcat-318317e4bf395d3fa89e1d675d64f43e-us-east-2</code></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>After the upload completes:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify your deployment - Find your S3 bucket (starts with <code>tcat-</code>) in the AWS Console</p>
+<div class="imageblock">
+<div class="content">
+<img src="docs/deployment_guide/images/verify_S3.png" alt="Verify S3 bucket contents">
+</div>
+</div>
+</li>
+<li>
+<p>Locate the template at <code>cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml</code></p>
+</li>
+<li>
+<p>Copy the Object URL:</p>
+<div class="imageblock">
+<div class="content">
+<img src="docs/deployment_guide/images/object_url.png" alt="Object URL location">
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can also construct the template URL using this pattern:
+<code><a href="https://&lt;bucket-name&gt;.s3.&lt;region&gt;.amazonaws.com/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml" class="bare">https://&lt;bucket-name&gt;.s3.&lt;region&gt;.amazonaws.com/cfn-ecr-aws-soci-index-builder/templates/SociIndexBuilder.yml</a></code></p>
+</div>
+<div class="paragraph">
+<p>Replace <code>&lt;bucket-name&gt;</code> with your S3 bucket name (starting with <code>tcat-</code>) and <code>&lt;region&gt;</code> with your deployment region.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Sign in to your AWS account, and open AWS Cloudformation console.</p>
+</li>
+<li>
+<p>Choose the AWS Region you want to deploy and choose <strong>Create stack</strong> option, select <strong>With new resources(standard)</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Paste the S3 Url from the predeployment step</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Ensure that you select the same region that was specified in your .taskcat.yml file.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="docs/deployment_guide/images/create_stack.png" alt="Create stack example">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>On the <strong>Specify stack details</strong> page, provide a stack name.
+Review the parameters for the template. Provide values for the parameters that require input, particularly the S3 bucket name (starting with <code>tcat-</code>) created during the taskcat upload step.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>SociIndexVersion</strong>: Determines the type of indices generated when a new image is pushed to the ECR repository.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>V2 (Recommended) - Latest version with enhanced security features</p>
+</li>
+<li>
+<p>V1 - Legacy version for backward compatibility</p>
+<div class="imageblock">
+<div class="content">
+<img src="docs/deployment_guide/images/stack_details.png" alt="Stack details example">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The CloudFormation template includes the following parameters:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>SociRepositoryImageTagFilters:</strong> Comma-separated list of SOCI repository image tag filters. Each filter is a repository name followed by a colon, ":" and followed by a tag. Both repository names and tags may contain wildcards denoted by an asterisk, "*".
+For example, <code>prod/*:latest</code> matches all images tagged with "latest" that are pushed to any repositories that start with "prod", while <code>"dev:*"</code> matches all images pushed to the "dev" repository. Use <code>"*:*"</code> to match all images pushed to all repositories in your private registry.</p>
+</li>
+<li>
+<p><strong>QSS3BucketName</strong>: Name of the S3 bucket for your copy of the deployment assets. Keep the default name unless you are customizing the template.</p>
+</li>
+<li>
+<p><strong>QSS3KeyPrefix</strong>: S3 key prefix that is used to simulate a folder for your copy of the deployment assets. Keep the default prefix unless you are customizing the template.</p>
+</li>
+<li>
+<p><strong>IamPermissionsBoundaryArn</strong>: IAM Roles might require an IAM Permissions boundary in order to be created and perform subsequent API calls to services. This parameter expects the ARN of an IAM policy, or to be set to none. When you finish reviewing and customizing the parameters, choose Next.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Unless you&#8217;re customizing the CFN template or are instructed otherwise in this guide&#8217;s <strong>Predeployment</strong> section, don&#8217;t change the default settings for the following parameters: <code>QSS3BucketName</code>, <code>QSS3BucketRegion</code>, and <code>QSS3KeyPrefix</code>. Changing the values of these parameters will modify code references that point to the Amazon Simple Storage Service (Amazon S3) bucket name and key prefix.
 </td>
 </tr>
 </table>
 </div>
 </li>
 <li>
-<p>On the <strong>Configure stack options</strong> page, you can <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html" target="_blank" rel="noopener">specify tags</a> (key-value pairs) for resources in your stack and <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html" target="_blank" rel="noopener">set advanced options</a>. When you finish, choose <strong>Next</strong>.</p>
+<p>On the <strong>Configure stack options</strong> page, you can <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-properties-resource-tags.html">specify tags</a> (key-value pairs) for resources in your stack and <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html#configure-stack-options">set advanced options</a>. When you finish, choose <strong>Next</strong>.</p>
 </li>
 <li>
-<p>On the <strong>Review</strong> page, review and confirm the template settings. Under <strong>Capabilities</strong>, select all of the check boxes to acknowledge that the template creates AWS Identity and Access Management (IAM)  resources that might require the ability to automatically expand macros.</p>
+<p>On the <strong>Review</strong> page, review and confirm the template settings. Under <strong>Capabilities</strong>, select all of the check boxes to acknowledge that the template creates AWS Identity and Access Management (IAM) resources that might require the ability to automatically expand macros.</p>
 </li>
 <li>
 <p>Choose <strong>Create stack</strong>. The stack takes about 5 minutes to deploy.</p>
@@ -1245,22 +1474,35 @@ Unless you&#8217;re customizing the Partner Solution templates or are instructed
 <p>Monitor the stack&#8217;s status, and when the status is <strong>CREATE_COMPLETE</strong>, the CFN AWS SOCI Index Builder deployment is ready.</p>
 </li>
 <li>
-<p>To view the created resources, choose the <strong>Outputs</strong> tab.</p>
+<p>To view the created resources, choose the <strong>Resources</strong> tab.</p>
 </li>
-</ol>
+</ul>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_cleanup">Cleanup</h2>
 <div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+If you used automatic deployment and customized the stack_name field in your .taskcat.yaml file, the actual resource names will differ from those shown below, as they will use your custom stack name instead.
+</td>
+</tr>
+</table>
+</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
 <p>To remove this solution, delete the Amazon CloudFormation stack created in the <strong>Deployment steps</strong> section.</p>
 </li>
 <li>
-<p>In the Amazon CloudWatch Logs console, delete the log groups <code>/aws/lambda/&lt;StackName&gt;-SociIndexGeneratorLambda</code> and <code>/aws/lambda/&lt;StackName&gt;-ECRImageActionEventFilteringLambda</code> where <code>&lt;StackName&gt;</code> is the name of the stack that you entered in the <strong>Deployment steps</strong> section. You can also use the <a href="https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_DeleteLogGroup.html" target="_blank" rel="noopener">DeleteLogGroup</a> API to delete the log groups.</p>
+<p>In the Amazon CloudWatch Logs console, delete the log groups <code>/aws/lambda/&lt;StackName&gt;-SociIndexGeneratorLambda-&lt;hash&gt;</code> and <code>/aws/lambda/&lt;StackName&gt;-ECRImageActionEventFilteringLambda-&lt;hash&gt;</code> where <code>&lt;StackName&gt;</code> is the name of the stack that you entered in the <strong>Deployment steps</strong> section. You can also use the <a href="https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_DeleteLogGroup.html" target="_blank" rel="noopener">DeleteLogGroup</a> API to delete the log groups.</p>
 </li>
 <li>
 <p>In the Amazon ECR console, delete the SOCI index artifacts. You can also use the <a href="https://docs.aws.amazon.com/AmazonECR/latest/APIReference/API_BatchDeleteImage.html" target="_blank" rel="noopener">BatchDeleteImage</a> API to delete the artifacts.</p>
@@ -1276,7 +1518,7 @@ Unless you&#8217;re customizing the Partner Solution templates or are instructed
 <p>For troubleshooting common issues, refer to <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html">Troubleshooting CloudFormation</a> and the <a href="https://fwd.aws/rA69w?">AWS Quick Start General Information Guide</a>.</p>
 </div>
 <div class="paragraph">
-<p>Lambda logs for generating SOCI index artifacts can be found in the CloudWatch log group <code>/aws/lambda/&lt;StackName&gt;-SociIndexGeneratorLambda</code>. Lambda logs for repository image tag filtering and matches can be found in the CloudWatch log group <code>/aws/lambda/&lt;StackName&gt;-ECRImageActionEventFilteringLambda</code>, where <code>&lt;StackName&gt;</code> is the name of the stack that you entered in the <strong>Deployment steps</strong> section.</p>
+<p>Lambda logs for generating SOCI index artifacts can be found in the CloudWatch log group <code>/aws/lambda/&lt;StackName&gt;-SociIndexGeneratorLambda-&lt;hash&gt;</code>. Lambda logs for repository image tag filtering and matches can be found in the CloudWatch log group <code>/aws/lambda/&lt;StackName&gt;-ECRImageActionEventFilteringLambda-&lt;hash&gt;</code>, where <code>&lt;StackName&gt;</code> is the name of the stack that you entered in the <strong>Deployment steps</strong> section.</p>
 </div>
 <div class="paragraph">
 <p>If Lambda logs for generating SOCI index artifacts show that the Lambda function is timing out (that is, <strong>Task timed out</strong> is in the log), this is likely caused by the image size. SOCI Index Builder supports a maximum compressed image size of 6 GB because larger sizes may force the SOCI index generator Lambda to time out after 15 minutes.</p>
@@ -1326,7 +1568,7 @@ A SOCI index will not be generated for an image if every layer in the image is u
 <h2 id="_customer_responsibility">Customer responsibility</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>After you deploy a Partner Solution, confirm that your resources and services are updated and configured—including any required patches—to meet your security and other needs. For more information, refer to the <a href="https://aws.amazon.com/compliance/shared-responsibility-model/" target="_blank" rel="noopener">Shared Responsibility Model</a>.</p>
+<p>After you deploy this template, confirm that your resources and services are updated and configured—including any required patches—to meet your security and other needs. For more information, refer to the <a href="https://aws.amazon.com/compliance/shared-responsibility-model/" target="_blank" rel="noopener">Shared Responsibility Model</a>.</p>
 </div>
 </div>
 </div>
@@ -1334,21 +1576,21 @@ A SOCI index will not be generated for an image if every layer in the image is u
 <h2 id="_feedback">Feedback</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To submit feature ideas and report bugs, use the <strong>Issues</strong> section of the <a href="https://github.com/aws-ia/cfn-ecr-aws-soci-index-builder" target="_blank" rel="noopener">GitHub repository</a> for this Partner Solution. To submit code, refer to the <a href="https://fwd.aws/NwqYA?" target="_blank" rel="noopener">Partner Solution Contributor&#8217;s Guide</a>. To submit feedback on this deployment guide, use the following GitHub links:</p>
+<p>To submit feature ideas and report bugs, use the <strong>Issues</strong> section of <a href="https://github.com/awslabs/cfn-ecr-aws-soci-index-builder" target="_blank" rel="noopener">GitHub repository</a>. To submit feedback on this deployment guide, use the following GitHub links:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://github.com/aws-ia/cfn-ecr-aws-soci-index-builder/issues/new?labels=documentation,grammar+or+spelling&amp;title=Deployment+guide+feedback&amp;body=Section+heading:%0ADocumentation+issue+description:%0A" target="_blank" rel="noopener">Grammar or spelling</a></p>
+<p><a href="https://github.com/awslabs/cfn-ecr-aws-soci-index-builder/issues/new?labels=documentation,grammar+or+spelling&amp;title=Deployment+guide+feedback&amp;body=Section+heading:%0ADocumentation+issue+description:%0A" target="_blank" rel="noopener">Grammar or spelling</a></p>
 </li>
 <li>
-<p><a href="https://github.com/aws-ia/cfn-ecr-aws-soci-index-builder/issues/new?labels=documentation,broken+link&amp;title=Deployment+guide+feedback&amp;body=Section+heading:%0ADocumentation+issue+description:%0A" target="_blank" rel="noopener">Broken link</a></p>
+<p><a href="https://github.com/awslabs/cfn-ecr-aws-soci-index-builder/issues/new?labels=documentation,broken+link&amp;title=Deployment+guide+feedback&amp;body=Section+heading:%0ADocumentation+issue+description:%0A" target="_blank" rel="noopener">Broken link</a></p>
 </li>
 <li>
-<p><a href="https://github.com/aws-ia/cfn-ecr-aws-soci-index-builder/issues/new?labels=documentation,inaccurate+content&amp;title=Deployment+guide+feedback&amp;body=Section+heading:%0ADocumentation+issue+description:%0A" target="_blank" rel="noopener">Inaccurate content</a></p>
+<p><a href="https://github.com/awslabs/cfn-ecr-aws-soci-index-builder/issues/new?labels=documentation,inaccurate+content&amp;title=Deployment+guide+feedback&amp;body=Section+heading:%0ADocumentation+issue+description:%0A" target="_blank" rel="noopener">Inaccurate content</a></p>
 </li>
 <li>
-<p><a href="https://github.com/aws-ia/cfn-ecr-aws-soci-index-builder/issues/new?labels=documentation,display+and+design&amp;title=Deployment+guide+feedback&amp;body=Section+heading:%0ADocumentation+issue+description:%0A" target="_blank" rel="noopener">Display or design</a></p>
+<p><a href="https://github.com/awslabs/cfn-ecr-aws-soci-index-builder/issues/new?labels=documentation,display+and+design&amp;title=Deployment+guide+feedback&amp;body=Section+heading:%0ADocumentation+issue+description:%0A" target="_blank" rel="noopener">Display or design</a></p>
 </li>
 </ul>
 </div>
@@ -1371,8 +1613,8 @@ A SOCI index will not be generated for an image if every layer in the image is u
         <!-- We can use document attributes: -->
         <!-- Generated with Asciidoctor v2.0.23. -->
         <a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> |
-        &copy; 2025, Amazon Web Services, Inc. or its affiliates and Amazon. All rights reserved.
+        &copy; 2025, Amazon Web Services, Inc. or its affiliates and . All rights reserved.
     </p>
-  </footer>
+</footer>
 </body>
 </html>

@@ -4,6 +4,8 @@
 
 == Cleanup
 
+NOTE: If you used automatic deployment and customized the stack_name field in your .taskcat.yaml file, the actual resource names will differ from those shown below, as they will use your custom stack name instead.
+
 1. To remove this solution, delete the Amazon CloudFormation stack created in the *Deployment steps* section.
-2. In the Amazon CloudWatch Logs console, delete the log groups `/aws/lambda/<StackName>-SociIndexGeneratorLambda` and `/aws/lambda/<StackName>-ECRImageActionEventFilteringLambda` where `<StackName>` is the name of the stack that you entered in the *Deployment steps* section. You can also use the https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_DeleteLogGroup.html[DeleteLogGroup^] API to delete the log groups.
+2. In the Amazon CloudWatch Logs console, delete the log groups `/aws/lambda/<StackName>-SociIndexGeneratorLambda-<hash>` and `/aws/lambda/<StackName>-ECRImageActionEventFilteringLambda-<hash>` where `<StackName>` is the name of the stack that you entered in the *Deployment steps* section. You can also use the https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_DeleteLogGroup.html[DeleteLogGroup^] API to delete the log groups.
 3. In the Amazon ECR console, delete the SOCI index artifacts. You can also use the https://docs.aws.amazon.com/AmazonECR/latest/APIReference/API_BatchDeleteImage.html[BatchDeleteImage^] API to delete the artifacts.
